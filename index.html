@@ -700,7 +700,7 @@ body.dark .wrd-emoji::before {
   backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
 }
 .overlay.open{display:flex;}
-body.scroll-locked { overflow:hidden; position:fixed; width:100%; }
+body.scroll-locked { overflow:hidden; touch-action:none; }
 .sheet {
   background:var(--surface); border-radius:28px 28px 0 0;
   padding:0 22px 52px; width:100%; max-width:480px;
@@ -1614,7 +1614,7 @@ body.dark .travel-popup.mishap .travel-header{background:linear-gradient(145deg,
     <div class="confirm-title">Restart the Game?</div>
     <div class="confirm-text">Your current season, inventory, and cash will be lost forever. This cannot be undone!</div>
     <div class="confirm-btns">
-      <button class="confirm-no"  onclick="document.getElementById('confirm-overlay').classList.remove('open')">Keep Playing</button>
+      <button class="confirm-no"  onclick="closeConfirm()">Keep Playing</button>
       <button class="confirm-yes" onclick="doEndGame()">Start New Game</button>
     </div>
   </div>
@@ -1829,6 +1829,7 @@ function startGame() {
   const raw = document.getElementById('player-name-input').value.trim();
   playerName = raw || 'You';
   try { localStorage.setItem('alaina-playername', raw); } catch(e) {}
+  unlockScroll();
   document.getElementById('intro').classList.remove('open');
   initGame();
 }
@@ -1844,8 +1845,13 @@ function closeSettings() {
   unlockScroll();
 }
 function closeSettingsIfBg(e) {
-  if (e.target === document.getElementById('settings-overlay')) closeSettings();
+  if (e.target === document.getElementById('settings-overlay')) { unlockScroll(); closeSettings(); }
 }
+function closeConfirm() {
+  document.getElementById('confirm-overlay').classList.remove('open');
+  unlockScroll();
+}
+
 function settingsRestart() {
   closeSettings();
   document.getElementById('confirm-overlay').classList.add('open');
@@ -1868,6 +1874,7 @@ function loadDarkMode() {
 
 // ── Travel popup ──
 function showTravelPopup(cls, icon, tag, title, body, onDismiss, btnText) {
+  lockScroll();
   const overlay = document.getElementById('travel-overlay');
   const popup   = document.getElementById('travel-popup');
   document.getElementById('travel-icon').textContent  = icon;
@@ -1882,6 +1889,7 @@ function showTravelPopup(cls, icon, tag, title, body, onDismiss, btnText) {
 function closeTravelPopup() {
   const overlay = document.getElementById('travel-overlay');
   overlay.classList.remove('open');
+  unlockScroll();
   if (typeof overlay._onDismiss === 'function') {
     overlay._onDismiss();
     overlay._onDismiss = null;
@@ -1889,12 +1897,14 @@ function closeTravelPopup() {
 }
 
 function confirmEndGame() {
+  lockScroll();
   document.getElementById('confirm-overlay').classList.add('open');
 }
 
 function doEndGame() {
   document.getElementById('confirm-overlay').classList.remove('open');
   document.getElementById('gameover').classList.remove('open');
+  unlockScroll();
   document.getElementById('intro').classList.add('open');
 }
 
@@ -1958,6 +1968,7 @@ function resumeSavedGame() {
     playerName = data.playerName || 'You';
     document.getElementById('gameover').classList.remove('open');
     document.getElementById('intro').classList.remove('open');
+    unlockScroll();
     renderAll();
     if (!resumeSavedGame()) {
     loadHighScore();
