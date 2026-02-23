@@ -98,6 +98,8 @@ body.dark {
 }
 
 *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+button { touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
+input  { touch-action:manipulation; }
 html { font-size:17px; -webkit-text-size-adjust:100%; }
 
 body {
@@ -1842,14 +1844,12 @@ function openSettings() {
 }
 function closeSettings() {
   document.getElementById('settings-overlay').classList.remove('open');
-  un
 }
 function closeSettingsIfBg(e) {
   if (e.target === document.getElementById('settings-overlay')) { closeSettings(); }
 }
 function closeConfirm() {
   document.getElementById('confirm-overlay').classList.remove('open');
-  un
 }
 
 function settingsRestart() {
@@ -1888,7 +1888,6 @@ function showTravelPopup(cls, icon, tag, title, body, onDismiss, btnText) {
 function closeTravelPopup() {
   const overlay = document.getElementById('travel-overlay');
   overlay.classList.remove('open');
-  un
   if (typeof overlay._onDismiss === 'function') {
     overlay._onDismiss();
     overlay._onDismiss = null;
@@ -1902,8 +1901,8 @@ function confirmEndGame() {
 function doEndGame() {
   document.getElementById('confirm-overlay').classList.remove('open');
   document.getElementById('gameover').classList.remove('open');
-  un
-  document.getElementById('intro').classList.add('open');
+  clearSavedGame();
+  initGame();
 }
 
 async function loadHighScore() {
@@ -1966,7 +1965,6 @@ function resumeSavedGame() {
     playerName = data.playerName || 'You';
     document.getElementById('gameover').classList.remove('open');
     document.getElementById('intro').classList.remove('open');
-    un
     renderAll();
     loadHighScore();
     showEvent('info', '✈️', 'Welcome Back',
@@ -2180,7 +2178,6 @@ function confirmTx() {
 function closeTx() {
   document.getElementById('tx-overlay').classList.remove('open');
   TX = {};
-  un
 }
 
 // ── CREDIT ────────────────────────────────────────────────
@@ -2247,7 +2244,6 @@ function confirmCredit() {
 
 function closeCr() {
   document.getElementById('cr-overlay').classList.remove('open');
-  un
 }
 
 // ── END GAME ──────────────────────────────────────────────
