@@ -698,15 +698,17 @@ body.dark .wrd-emoji::before {
   background:rgba(12,8,4,.62);
   z-index:200; align-items:flex-end; justify-content:center;
   backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  overscroll-behavior:none;
 }
 .overlay.open{display:flex;}
-body.scroll-locked { overflow:hidden; touch-action:none; }
 .sheet {
   background:var(--surface); border-radius:28px 28px 0 0;
   padding:0 22px 52px; width:100%; max-width:480px;
   animation:sheetUp .32s cubic-bezier(.32,1,.48,1);
   box-shadow:0 -1px 0 var(--border-soft),0 -20px 60px rgba(12,8,4,.22);
   position:relative; overflow:hidden;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
 }
 .sheet::before {
   content:''; position:absolute; top:0; left:0; right:0; height:3px;
@@ -1029,7 +1031,7 @@ body.dark .end-game-btn {
 .confirm-overlay {
   display:none; position:fixed; inset:0;
   background:rgba(8,4,2,.68);
-  z-index:500; align-items:center; justify-content:center; padding:24px;
+  z-index:500; align-items:center; justify-content:center; padding:24px; overscroll-behavior:none;
   backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
 }
 .confirm-overlay.open{display:flex;}
@@ -1829,7 +1831,6 @@ function startGame() {
   const raw = document.getElementById('player-name-input').value.trim();
   playerName = raw || 'You';
   try { localStorage.setItem('alaina-playername', raw); } catch(e) {}
-  document.body.classList.remove('scroll-locked');
   document.getElementById('intro').classList.remove('open');
   initGame();
 }
@@ -1837,19 +1838,18 @@ function startGame() {
 // ── Settings ──
 function openSettings() {
   haptic('light');
-  lockScroll();
   document.getElementById('settings-overlay').classList.add('open');
 }
 function closeSettings() {
   document.getElementById('settings-overlay').classList.remove('open');
-  unlockScroll();
+  un
 }
 function closeSettingsIfBg(e) {
-  if (e.target === document.getElementById('settings-overlay')) { unlockScroll(); closeSettings(); }
+  if (e.target === document.getElementById('settings-overlay')) { closeSettings(); }
 }
 function closeConfirm() {
   document.getElementById('confirm-overlay').classList.remove('open');
-  unlockScroll();
+  un
 }
 
 function settingsRestart() {
@@ -1874,7 +1874,6 @@ function loadDarkMode() {
 
 // ── Travel popup ──
 function showTravelPopup(cls, icon, tag, title, body, onDismiss, btnText) {
-  lockScroll();
   const overlay = document.getElementById('travel-overlay');
   const popup   = document.getElementById('travel-popup');
   document.getElementById('travel-icon').textContent  = icon;
@@ -1889,7 +1888,7 @@ function showTravelPopup(cls, icon, tag, title, body, onDismiss, btnText) {
 function closeTravelPopup() {
   const overlay = document.getElementById('travel-overlay');
   overlay.classList.remove('open');
-  unlockScroll();
+  un
   if (typeof overlay._onDismiss === 'function') {
     overlay._onDismiss();
     overlay._onDismiss = null;
@@ -1897,14 +1896,13 @@ function closeTravelPopup() {
 }
 
 function confirmEndGame() {
-  lockScroll();
   document.getElementById('confirm-overlay').classList.add('open');
 }
 
 function doEndGame() {
   document.getElementById('confirm-overlay').classList.remove('open');
   document.getElementById('gameover').classList.remove('open');
-  unlockScroll();
+  un
   document.getElementById('intro').classList.add('open');
 }
 
@@ -1968,7 +1966,7 @@ function resumeSavedGame() {
     playerName = data.playerName || 'You';
     document.getElementById('gameover').classList.remove('open');
     document.getElementById('intro').classList.remove('open');
-    unlockScroll();
+    un
     renderAll();
     loadHighScore();
     showEvent('info', '✈️', 'Welcome Back',
@@ -2115,7 +2113,6 @@ function openBuy(idx) {
   affordEl.textContent = 'You can afford up to ' + maxQ + (cargoLimited ? ' (luggage full after that)' : ' with your current balance');
   document.getElementById('tx-cta').textContent = 'Confirm Purchase';
   updSheet();
-  lockScroll();
   document.getElementById('tx-overlay').classList.add('open');
 }
 
@@ -2139,7 +2136,6 @@ function openSell(idx) {
   document.getElementById('tx-afford').textContent = '';
   document.getElementById('tx-cta').textContent = '💸 Confirm Sale';
   updSheet();
-  lockScroll();
   document.getElementById('tx-overlay').classList.add('open');
 }
 
@@ -2184,7 +2180,7 @@ function confirmTx() {
 function closeTx() {
   document.getElementById('tx-overlay').classList.remove('open');
   TX = {};
-  unlockScroll();
+  un
 }
 
 // ── CREDIT ────────────────────────────────────────────────
@@ -2220,7 +2216,6 @@ function openCredit(mode) {
     ? fmt(G.cash) + ' in cash · ' + remaining + ' borrow' + (remaining === 1 ? '' : 's') + ' left!'
     : 'You can repay up to ' + fmt(Math.min(G.debt, G.cash)) + '.';
   document.getElementById('cr-amt').textContent   = fmt(CR.amt);
-  lockScroll();
   document.getElementById('cr-overlay').classList.add('open');
 }
 
@@ -2252,7 +2247,7 @@ function confirmCredit() {
 
 function closeCr() {
   document.getElementById('cr-overlay').classList.remove('open');
-  unlockScroll();
+  un
 }
 
 // ── END GAME ──────────────────────────────────────────────
