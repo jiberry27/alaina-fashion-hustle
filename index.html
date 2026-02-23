@@ -1829,7 +1829,7 @@ function startGame() {
   const raw = document.getElementById('player-name-input').value.trim();
   playerName = raw || 'You';
   try { localStorage.setItem('alaina-playername', raw); } catch(e) {}
-  unlockScroll();
+  document.body.classList.remove('scroll-locked');
   document.getElementById('intro').classList.remove('open');
   initGame();
 }
@@ -1970,9 +1970,7 @@ function resumeSavedGame() {
     document.getElementById('intro').classList.remove('open');
     unlockScroll();
     renderAll();
-    if (!resumeSavedGame()) {
     loadHighScore();
-  }
     showEvent('info', '✈️', 'Welcome Back',
       (playerName !== 'You' ? 'Welcome back, ' + playerName + '!' : 'Welcome back!') +
       ' You are on Day ' + G.day + ' of 30 with ' + fmt(G.cash) + ' in hand. Good luck!');
@@ -2667,10 +2665,12 @@ document.addEventListener('click', function(e) {
   }
 });
 
-// Show intro screen on first load
-document.getElementById('intro').classList.add('open');
-loadHighScore();
+// Show intro or resume saved game
 loadDarkMode();
+if (!resumeSavedGame()) {
+  document.getElementById('intro').classList.add('open');
+  loadHighScore();
+}
 </script>
 </body>
 </html>
